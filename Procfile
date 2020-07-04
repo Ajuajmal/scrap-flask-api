@@ -1,1 +1,1 @@
-web: gunicorn app:scrap-api
+web: gunicorn app:app
