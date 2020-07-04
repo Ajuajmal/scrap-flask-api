@@ -1,0 +1,22 @@
+<!doctype html>
+<title>Scrap From Urls</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+  <h1>Scrap From Urls</h1>
+
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  <form method="post">
+  <label for="url">link</label>
+  <input name="url" id="url" required>
+  <label for="data">data</label>
+  <input type="text" name="data" id="data" required>
+  <input type="submit" value="Get">
+</form>
+</section>
