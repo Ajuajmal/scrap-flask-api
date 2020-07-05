@@ -9,6 +9,7 @@ plugins:
 
   - serverless-wsgi
 
+  - serverless-domain-manager
 
 custom:
 
@@ -22,6 +23,11 @@ custom:
 
     dockerizePip: non-linux
 
+  customDomain:
+    domainName: linkedin.api.ajmalaju.com
+    basePath: 'dev'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 provider:
 

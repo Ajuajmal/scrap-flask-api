@@ -32,13 +32,15 @@ def scrapper(link,user_req_data):
         print("Login Successful")
     except:
         print("Failed to Login")
-        return([{"server-error":"try again, after some time"}])
+        return([{"server-error":"can't establish connection ,try again, after some time"}])
     url = link
     html = client.get(url).content
     print(html)
     soup = BeautifulSoup(html , "html.parser")
     data = soup.find_all('code')
     print(data)
+    if data == []:
+        return([{"server-error":"failed to fetch data, try again, after some time"}])
     found = False
     req_data = {}
     for element in data:
@@ -71,7 +73,7 @@ def scrapper(link,user_req_data):
             pass
     return resp
 
-@app.route('/', methods=('GET', 'POST'))
+@app.route('/api/v1/linkedin/', methods=('GET', 'POST'))
 def respond():
     if request.method == 'POST':
         req_data = request.form['data']
