@@ -1,0 +1,47 @@
+org: ajuajmal
+app: flask-linkedin-api
+service: serverless-flask
+
+
+plugins:
+
+  - serverless-python-requirements
+
+  - serverless-wsgi
+
+
+custom:
+
+  wsgi:
+
+    app: app.app
+
+    packRequirements: false
+
+  pythonRequirements:
+
+    dockerizePip: non-linux
+
+
+provider:
+
+  name: aws
+
+  runtime: python3.7
+
+  stage: dev
+
+  region: ap-south-1
+
+
+functions:
+
+  app:
+
+    handler: wsgi.handler
+
+    events:
+
+      - http: ANY /
+
+      - http: 'ANY {proxy+}'
