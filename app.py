@@ -16,7 +16,6 @@ app = Flask(__name__)
 
 def scrapper(link,user_req_data):
     client = requests.Session()
-#create url page variables
     HOMEPAGE_URL = 'https://www.linkedin.com'
     LOGIN_URL = 'https://www.linkedin.com/uas/login-submit'
     html = client.get(HOMEPAGE_URL).content
@@ -36,8 +35,10 @@ def scrapper(link,user_req_data):
         return([{"server-error":"try again, after some time"}])
     url = link
     html = client.get(url).content
+    print(html)
     soup = BeautifulSoup(html , "html.parser")
     data = soup.find_all('code')
+    print(data)
     found = False
     req_data = {}
     for element in data:
