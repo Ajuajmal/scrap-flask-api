@@ -14,9 +14,9 @@
   {% endfor %}
   <form method="post">
   <label for="url">link</label>
-  <input name="url" id="url" required>
-  <label for="data">data</label>
-  <input type="text" name="data" id="data" required>
+  <input type="url" name="url" id="url" placeholder="https://www.linkedin.com/in/username/" required>
+  <label for="data">requesting data</label>
+  <input type="text" name="data" id="data" placeholder="headline/firstName/lastName/summary"required>
   <input type="submit" value="Get">
 </form>
 </section>
