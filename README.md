@@ -2,9 +2,19 @@
 
 ### Tools we are using
 
-  - flask :- for our api application
-  - bs4 :- for scrapping
-  - requests: for authenticating with linkedin
+  - `flask` : for our api application
+  - `bs4` : for scrapping
+  - `requests`: for authenticating with linkedin
+  - `pickle` : for storing the cookijar (maintain the authenticated session)
+  
+  > production
+  
+  - `serverless` : [aws-lambda, aws-api-gateway, cloudfront, s3-bucket] for running the application
+  - `s3-bucket` : for storing the cookie
+  - `cloudflare,aws certificate manager`: for availing custom domain
+  - `boto3` : for s3 integration (write/read cookie)
+  
+  
 
 ### Fire the api calls :
 
@@ -12,7 +22,7 @@
 
      > https://scrap-api.ajmalaju.com/api/v1/linkedin/
 
-      - url : https://www.linkedin.com/in/<username>/
+      - url : https://www.linkedin.com/in/username/
 
         eg:- https://www.linkedin.com/in/ajmalaju/
       - requesting data : you can request any one of the data below at a time
