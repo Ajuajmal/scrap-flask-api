@@ -3,3 +3,4 @@ gunicorn
 requests
 bs4
 pickle-mixin
+boto3

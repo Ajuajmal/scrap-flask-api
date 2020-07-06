@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify,render_template
-import os
 
 from bs4 import BeautifulSoup
 import requests
-import json
 import pickle
-from os import path
+import boto3
 
+import json
+import os
+from os import path
 import re
 
 
@@ -14,20 +15,44 @@ import re
 
 LINKEDIN_MAIL = os.environ.get("LINKEDIN_MAIL")
 LINKEDIN_PASSWORD = os.environ.get("LINKEDIN_PASSWORD")
+S3_ACCESS_KEY = os.environ.get("S3_ACCESS_KEY")
+S3_SECRET_KEY = os.environ.get("S3_SECRET_KEY")
+S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_FILE_NAME = os.environ.get("S3_FILE_NAME")
 
 app = Flask(__name__)
 
 
 SERVER_ERROR = [{"server-error":"can't establish connection ,try again, after some time"}]
 SERVER_ERROR_DATA = [{"server-error":"failed to fetch data, try again, after some time"}]
-def save_cookies(requests_cookiejar):
-    filename='cookies'
-    with open(filename, 'wb') as f:
-        pickle.dump(requests_cookiejar, f)
 
-def load_cookies(filename):
-    with open(filename, 'rb') as f:
-        return pickle.load(f)
+def connect_s3():
+    s3_client = boto3.client('s3',aws_access_key_id=S3_ACCESS_KEY,
+    aws_secret_access_key=S3_SECRET_KEY)
+
+    return s3_client
+
+def save_cookies(requests_cookiejar):
+    s3_client = connect_s3()
+    cookie_object=pickle.dumps(requests_cookiejar)
+    upload_response = s3_client.put_object(
+    Bucket= S3_BUCKET,
+    Body=cookie_object,
+    Key= S3_FILE_NAME
+    )
+
+def load_cookies():
+    s3_client = connect_s3()
+    try:
+        cookie_req = s3_client.get_object(
+    Bucket=S3_BUCKET,
+    Key=S3_FILE_NAME)
+        cookies = pickle.loads(cookie_req['Body'].read())
+        return cookies
+    except:
+        return "nofiles"
+
+
 
 def login_linkedin():
     client = requests.Session()
@@ -56,18 +81,21 @@ def login_linkedin():
     return "success"
 
 def scrapper(link,user_req_data):
-    if not path.exists('cookies'):
+    cookies = load_cookies()
+    if cookies == "nofiles":
         login = login_linkedin()
         if login == "success":
+            cookies = load_cookies()
             print("Linkedin : Login Successful")
         else:
             print("Linkedin : Failed to Login")
             return(SERVER_ERROR)
     url = link
-    html = requests.get(url,cookies=load_cookies('cookies'))
+    html = requests.get(url,cookies=cookies)
     if not html.status_code == 200:
         login = login_linkedin()
-        html = requests.get(url,cookies=load_cookies('cookies'))
+        cookies = load_cookies()
+        html = requests.get(url,cookies=cookies)
         if not login == "success" or not html.status_code == 200:
             return(SERVER_ERROR)
     print(html)
