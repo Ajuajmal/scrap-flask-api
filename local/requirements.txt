@@ -2,3 +2,4 @@ flask
 requests
 bs4
 pickle-mixin
+python-dotenv
