@@ -4,8 +4,11 @@ import os
 from bs4 import BeautifulSoup
 import requests
 import json
+import pickle
+from os import path
 
 import re
+
 
 
 
@@ -14,33 +17,65 @@ LINKEDIN_PASSWORD = os.environ.get("LINKEDIN_PASSWORD")
 
 app = Flask(__name__)
 
-def scrapper(link,user_req_data):
+
+SERVER_ERROR = [{"server-error":"can't establish connection ,try again, after some time"}]
+SERVER_ERROR_DATA = [{"server-error":"failed to fetch data, try again, after some time"}]
+def save_cookies(requests_cookiejar):
+    filename='cookies'
+    with open(filename, 'wb') as f:
+        pickle.dump(requests_cookiejar, f)
+
+def load_cookies(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)
+
+def login_linkedin():
     client = requests.Session()
     HOMEPAGE_URL = 'https://www.linkedin.com'
     LOGIN_URL = 'https://www.linkedin.com/uas/login-submit'
     html = client.get(HOMEPAGE_URL).content
     soup = BeautifulSoup(html, "html.parser")
-
     try:
         csrf = soup.find('input', dict(name='loginCsrfParam'))['value']
+    except:
+        print("csrf :error")
+        return "csrf :error"
+
+    try:
         login_information = {
             'session_key':LINKEDIN_MAIL,
             'session_password':LINKEDIN_PASSWORD,
             'loginCsrfParam': csrf,
         }
         client.post(LOGIN_URL, data=login_information)
+        save_cookies(client.cookies)
         print("Login Successful")
     except:
-        print("Failed to Login")
-        return([{"server-error":"can't establish connection ,try again, after some time"}])
+        print("login:error")
+        return "login:error"
+    return "success"
+
+def scrapper(link,user_req_data):
+    if not path.exists('cookies'):
+        login = login_linkedin()
+        if login == "success":
+            print("Linkedin : Login Successful")
+        else:
+            print("Linkedin : Failed to Login")
+            return(SERVER_ERROR)
     url = link
-    html = client.get(url).content
+    html = requests.get(url,cookies=load_cookies('cookies'))
+    if not html.status_code == 200:
+        login = login_linkedin()
+        html = requests.get(url,cookies=load_cookies('cookies'))
+        if not login == "success" or not html.status_code == 200:
+            return(SERVER_ERROR)
     print(html)
-    soup = BeautifulSoup(html , "html.parser")
+    soup = BeautifulSoup(html.content , "html.parser")
     data = soup.find_all('code')
     print(data)
     if data == []:
-        return([{"server-error":"failed to fetch data, try again, after some time"}])
+        return(SERVER_ERROR_DATA)
     found = False
     req_data = {}
     for element in data:

@@ -2,3 +2,4 @@ flask
 gunicorn
 requests
 bs4
+pickle-mixin
