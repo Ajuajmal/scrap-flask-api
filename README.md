@@ -6,15 +6,15 @@
   - `bs4` : for scrapping
   - `requests`: for authenticating with linkedin
   - `pickle` : for storing the cookijar (maintain the authenticated session)
-  
+
   > production
-  
+
   - `serverless` : [aws-lambda, aws-api-gateway, cloudfront, s3-bucket] for running the application
   - `s3-bucket` : for storing the cookie
   - `cloudflare,aws certificate manager`: for availing custom domain
   - `boto3` : for s3 integration (write/read cookie)
-  
-  
+
+
 
 ### Fire the api calls :
 
@@ -72,22 +72,21 @@
 
       `pip3 install -r requirements.txt`
 
-  - #### Set Env Variables
+      - #### Set Env Variables
 
-      `cp .env.local .env`
+          `cp .env.local .env`
 
-      - edit and add the following in .env file `nano .env`
+          - edit and add the following in .env file `nano .env`
 
-      - eg : -  
+          - eg : -
+                  LINKEDIN_MAIL = 'test@mail.com'
+                  LINKEDIN_PASSWORD = 'password12345'
 
-              ````
-                LINKEDIN_MAIL = 'test@mail.com'
+          - save `.env` file by `CTRL+O` and exit the editor `CTRL+X`
 
-                LINKEDIN_PASSWORD = 'password12345'
-              ````
+          > if your env Variables not picked automatically(during runtime), then please
+        try this guide https://help.pythonanywhere.com/pages/environment-variables-for-web-apps/
 
-      - save `.env` file by `CTRL+O` and exit the editor `CTRL+X`
+- ### Fire the app
 
-   - # Fire the app
-
-       `flask run`
+  `flask run`

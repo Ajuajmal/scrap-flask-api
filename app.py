@@ -63,7 +63,6 @@ def login_linkedin():
     try:
         csrf = soup.find('input', dict(name='loginCsrfParam'))['value']
     except:
-        print("csrf :error")
         return "csrf :error"
 
     try:
@@ -74,9 +73,7 @@ def login_linkedin():
         }
         client.post(LOGIN_URL, data=login_information)
         save_cookies(client.cookies)
-        print("Login Successful")
     except:
-        print("login:error")
         return "login:error"
     return "success"
 
@@ -86,9 +83,7 @@ def scrapper(link,user_req_data):
         login = login_linkedin()
         if login == "success":
             cookies = load_cookies()
-            print("Linkedin : Login Successful")
         else:
-            print("Linkedin : Failed to Login")
             return(SERVER_ERROR)
     url = link
     html = requests.get(url,cookies=cookies)
@@ -98,10 +93,8 @@ def scrapper(link,user_req_data):
         html = requests.get(url,cookies=cookies)
         if not login == "success" or not html.status_code == 200:
             return(SERVER_ERROR)
-    print(html)
     soup = BeautifulSoup(html.content , "html.parser")
     data = soup.find_all('code')
-    print(data)
     if data == []:
         return(SERVER_ERROR_DATA)
     found = False
@@ -115,7 +108,6 @@ def scrapper(link,user_req_data):
                     if 'birthDateOn' in values.keys():
                         found = True
                         req_data = values
-                        print('found at {pos}'.format(pos=data.index(element)))
                         break
             if found:
                 break
@@ -128,10 +120,6 @@ def scrapper(link,user_req_data):
             resp = [{
                 user_req_data : req_data[user_req_data]
             }]
-            print(req_data['firstName'])
-            print(req_data['headline'])
-            print(req_data['lastName'])
-            print(req_data['summary'])
         except:
             pass
     return resp
